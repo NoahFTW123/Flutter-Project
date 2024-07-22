@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+// Entry point of the application
 void main() {
   runApp(const MyApp());
 }
 
+// Main app widget
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -15,11 +17,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.deepOrange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const MyHomePage(),
+      home: const MyHomePage(), // Sets the home widget of the app
     );
   }
 }
 
+// Home page widget
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -27,12 +30,14 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+// State class for the home page widget
 class _MyHomePageState extends State<MyHomePage> {
-  String text = "";
+  String text = ""; // Variable to hold the text entered by the user
 
-  void changeText(String text) {
+  // Function to update the text variable
+  void changeText(String newText) {
     setState(() {
-      this.text = text;
+      text = newText;
     });
   }
 
@@ -44,8 +49,8 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            TextInputWidget(changeText),
-            Text(text),
+            TextInputWidget(callback: changeText), // Custom widget to input text
+            Text(text), // Displays the text entered by the user
           ],
         ),
       ),
@@ -53,27 +58,32 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+// Custom widget for text input
 class TextInputWidget extends StatefulWidget {
-  final Function(String) callback;
+  final Function(String) callback; // Callback function to pass the text back to the parent
 
-  const TextInputWidget(this.callback, {super.key});
+  const TextInputWidget({required this.callback, super.key});
 
   @override
   State<TextInputWidget> createState() => _TextInputWidgetState();
 }
 
+// State class for the TextInputWidget
 class _TextInputWidgetState extends State<TextInputWidget> {
-  final controller = TextEditingController();
+  final TextEditingController controller = TextEditingController(); // Controller for the text field
+  final FocusNode focusNode = FocusNode(); // Focus node to manage focus for the text field
 
   @override
   void dispose() {
-    controller.dispose();
+    controller.dispose(); // Dispose the controller when the widget is disposed
+    focusNode.dispose(); // Dispose the focus node when the widget is disposed
     super.dispose();
   }
 
+  // Function to handle button click and send text to parent widget
   void click() {
-    widget.callback(controller.text);
-    controller.clear();
+    widget.callback(controller.text); // Call the callback with the text
+    controller.clear(); // Clear the text field
   }
 
   @override
@@ -82,16 +92,20 @@ class _TextInputWidgetState extends State<TextInputWidget> {
       padding: const EdgeInsets.all(16.0),
       child: TextField(
         controller: controller,
+        focusNode: focusNode,
         decoration: InputDecoration(
-          prefixIcon: const Icon(Icons.message),
-          labelText: "Type a Message:",
+          prefixIcon: const Icon(Icons.message), // Icon at the beginning of the text field
+          labelText: "Type a Message:", // Label for the text field
           suffixIcon: IconButton(
-            icon: const Icon(Icons.send),
+            icon: const Icon(Icons.send), // Icon button to send the text
             splashColor: Colors.blue,
             tooltip: "Post Message",
-            onPressed: click,
+            onPressed: click, // Call the click function when pressed
           ),
         ),
+        onTap: () {
+          focusNode.requestFocus(); // Request focus when the text field is tapped
+        },
       ),
     );
   }
